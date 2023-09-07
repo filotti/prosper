@@ -88,30 +88,29 @@ make sure you're using the correct project and account.
 
 ### 1. Clone the repository
 
-```bash
+```
 git clone https://github.com/filotti/prosper.git
 cd prosper
 ```
 
 ### 2. Enable the required APIs
-    
-    ```bash 
-    gcloud services enable secretmanager.googleapis.com
-    gcloud services enable cloudfunctions.googleapis.com
-    gcloud services enable cloudscheduler.googleapis.com
-    gcloud services enable pubsub.googleapis.com
-    gcloud services enable cloudbuild.googleapis.com
-    ```
+```
+  gcloud services enable secretmanager.googleapis.com
+  gcloud services enable cloudfunctions.googleapis.com
+  gcloud services enable cloudscheduler.googleapis.com
+  gcloud services enable pubsub.googleapis.com
+  gcloud services enable cloudbuild.googleapis.com
+ ```
 
 ### 3. Create the Pub/Sub topic
 
-```bash
+```
 gcloud pubsub topics create prosper
 ```
 
 ### 4. Create the Cloud Scheduler job
 
-```bash
+```
 gcloud scheduler jobs create pubsub prosper --schedule="0 * * * *" --topic prosper --message-body="{}" --location=us-central1
 ```
 
@@ -133,7 +132,7 @@ The Cloud Function requires the following environment variables to be set:
         "listing_term": ["24", "36"],
         "g218b_max": "0",
         "biddable": "true",
-        "sort_by": "percent\_funded desc",
+        "sort_by": "percent_funded desc",
         "amount_remaining_min": "25"
     }
     ```
@@ -142,7 +141,7 @@ You can find all the available filtering criteria in the
 [Prosper API documentation](https://developers.prosper.com/docs/investor/listings-api/).
 
 Using Cloud Shell, you can set the variables like this:
-```bash
+```
 export GCP_PROJECT=$DEVSHELL_PROJECT_ID
 export INVESTMENT_AMOUNT=25
 export INVESTMENT_CRITERIA=''{"prosper_rating":["C","D","E"],"listing_term":["24","36"],"g218b_max":"0","biddable":"true","sort_by":"percent_funded desc","amount_remaining_min":"25"}''
@@ -162,7 +161,7 @@ And it will invest $25 in each listing.
 
 Run the following command to deploy the Cloud Function:
 
-```bash
+```
 gcloud functions deploy prosper \
 --runtime python311 \
 --trigger-topic prosper \
