@@ -14,7 +14,7 @@ places bids on them.
 1. A Google Cloud Platform (GCP) Project
 2. A Prosper investor account
 
-This application runs on the GCP Cloud Functions platform and uses Secret Manager to store sensitive information. It's 
+This application runs on the GCP Cloud Functions platform and uses Secrets Manager to store sensitive information. It's 
 triggered by a Cloud Scheduler job that sends a message to a Pub/Sub topic, which in turn starts the Cloud Function.
 
 ## GCP Components Used
@@ -22,8 +22,8 @@ triggered by a Cloud Scheduler job that sends a message to a Pub/Sub topic, whic
 This application integrates multiple components from Google Cloud Platform (GCP) for seamless automation and secure data 
 management.
 
-### Google Secret Manager
-Google Secret Manager allows us to securely and conveniently manage sensitive data like the credentials used to call 
+### Google Secrets Manager
+Google Secrets Manager allows us to securely and conveniently manage sensitive data like the credentials used to call 
 the Prosper API. 
 
 **Features Utilized:**
@@ -67,9 +67,9 @@ Google Cloud Pub/Sub facilitates real-time messaging between applications. In th
 
 ## Setup
 
-### 1. Google Secret Manager
+### 1. Google Secrets Manager
 
-Store the following secrets in Google Secret Manager:
+Store the following secrets in Google Secrets Manager:
 
 - `PROSPER_USER`: Your Prosper username.
 - `PROSPER_PASSWORD`: Your Prosper password.
