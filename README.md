@@ -3,6 +3,12 @@
 This application automates the investment process for listings on Prosper based on user-defined criteria. It retrieves 
 your account balance, checks listings matching your criteria, and automatically places bids.
 
+## Introduction
+
+This application is designed to automate the investment process for listings on Prosper. It retrieves your account
+balance, and if it's over the minimum investment amount, it checks listings matching your criteria and automatically
+places bids on them.
+
 ## Prerequisites
 
 1. A Google Cloud Platform (GCP) Project
@@ -113,7 +119,7 @@ gcloud scheduler jobs create pubsub prosper --schedule="0 * * * *" --topic prosp
 want by specifying a different cron expression. For example, to trigger the function every day at 9 AM, you would use 
 `0 9 * * *`.
 
-### 5. Deploy the Cloud Function
+### 5. Set environment variables including the investment amounts and criteria
 
 The Cloud Function requires the following environment variables to be set:
 
@@ -140,21 +146,47 @@ Using Cloud Shell, you can set the variables like this:
 export GCP_PROJECT=$DEVSHELL_PROJECT_ID
 export INVESTMENT_AMOUNT=25
 export INVESTMENT_CRITERIA=''{"prosper_rating":["C","D","E"],"listing_term":["24","36"],"g218b_max":"0","biddable":"true","sort_by":"percent_funded desc","amount_remaining_min":"25"}''
-
 ```
 
-Then you can deploy the Cloud Function: 
+These criteria will invest in:
+
+- Listings with a Prosper Rating of C, D, or E.
+- Listings with a term of 24 or 36 months.
+- Listings that had no delinquencies in the last 7 years.
+- Listings that are biddable.
+- Listings with a remaining biddable amount of at least $25.
+
+And it will invest $25 in each listing.
+
+### 6. Deploy the Cloud Function
+
+Run the following command to deploy the Cloud Function:
 
 ```bash
 gcloud functions deploy prosper \
 --runtime python311 \
 --trigger-topic prosper \
 --region us-central1 \
---set-env-vars GCP_PROJECT=$GCP_PROJECT,INVESTMENT_AMOUNT=$INVESTMENT_AMOUNT,INVESTMENT_CRITERIA=$INVESTMENT_CRITERIA
---source=. 
+--set-env-vars GCP_PROJECT=$GCP_PROJECT,INVESTMENT_AMOUNT=$INVESTMENT_AMOUNT,INVESTMENT_CRITERIA=$INVESTMENT_CRITERIA \
+--source=. \
+--docker-registry artifact-registry 
 ```
 
-### 6. Test the Cloud Function
+### 7. Test the Cloud Function
 
 You can test the Cloud Function by triggering a manual execution in Cloud Scheduler. To do this, go to the Cloud
 Scheduler page in the GCP Console, click on the three dots next to the job you created, and select "Force Run".
+
+### 8. Check the logs
+
+You can check the logs for the Cloud Function in the GCP Console. Go to the Cloud Functions page, click on the name of
+the function, and then click on the "Logs" tab. You should see a log entry for each listing that was invested in.
+
+## License
+
+This project is licensed under the Apache 2.0 License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+* [Prosper](https://www.prosper.com/) for providing the API that makes this possible. However, I should add that 
+this tool is not officially affiliated with, endorsed by, or in any way officially connected with Prosper.
