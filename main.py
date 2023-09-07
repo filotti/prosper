@@ -20,30 +20,38 @@ def subscribe(cloud_event: CloudEvent) -> None:
 
 def main():
     """Main function to trigger investment process."""
-    investment_amount = int(os.environ['INVESTMENT_AMOUNT'])
+    investment_amount_str = os.environ.get('INVESTMENT_AMOUNT')
+    if not investment_amount_str:
+        raise ValueError("INVESTMENT_AMOUNT environment variable is not set.")
+    investment_amount = int(investment_amount_str)
+
     access_token = get_access_token()
     account_info = get_account_info(access_token)
-    available_balance = account_info['available_cash_balance']
+    available_balance = account_info.get('available_cash_balance')
+    if not available_balance:
+        raise ValueError("Failed to fetch available_cash_balance from account_info.")
+
     if available_balance > investment_amount:
         invest(access_token, available_balance, investment_amount)
+    else:
+        print("Insufficient funds to invest.")
 
 
 def invest(access_token: str, available_balance: float, investment_amount: int):
     """Invest in listings based on certain criteria."""
-
     raw_criteria = os.environ.get('INVESTMENT_CRITERIA')
-    criteria = json.loads(raw_criteria)
+    if not raw_criteria:
+        raise ValueError("INVESTMENT_CRITERIA environment variable is not set.")
 
+    criteria = json.loads(raw_criteria)
     listings = get_listings(access_token, **criteria)
 
-    for listing in listings['result']:
+    for listing in listings.get('result', []):
         if available_balance < investment_amount:
             break
         available_balance -= investment_amount
-
         print("Investing in listing:")
         print(json.dumps(listing, indent=4, sort_keys=True))
-
         invest_in_listing(access_token, listing['listing_number'], investment_amount)
 
 
@@ -115,12 +123,22 @@ def get_account_info(access_token: str) -> dict:
 
 def get_access_token() -> str:
     """Obtain access token for API calls."""
-    prosper_user, prosper_password, prosper_client_id, prosper_client_secret = get_secrets()
-    payload = f"grant_type=password&client_id={prosper_client_id}&client_secret={prosper_client_secret}" \
-              f"&username={prosper_user}&password={prosper_password}"
-    headers = {'accept': "application/json", 'content-type': "application/x-www-form-urlencoded"}
+    secrets = get_secrets()
 
-    response = requests.request("POST", PROSPER_TOKEN_URL, data=payload, headers=headers)
+    payload_data = {
+        "grant_type": "password",
+        "client_id": secrets["PROSPER_CLIENT_ID"],
+        "client_secret": secrets["PROSPER_CLIENT_SECRET"],
+        "username": secrets["PROSPER_USER"],
+        "password": secrets["PROSPER_PASSWORD"]
+    }
+
+    headers = {
+        'accept': "application/json",
+        'content-type': "application/x-www-form-urlencoded"
+    }
+
+    response = requests.post(PROSPER_TOKEN_URL, data=payload_data, headers=headers)
 
     # Handle non-200 status codes
     response.raise_for_status()
@@ -128,16 +146,24 @@ def get_access_token() -> str:
     return response.json()['access_token']
 
 
-def get_secrets() -> tuple:
+def get_secrets() -> dict:
     """Retrieve secrets for authentication."""
-    project_id = os.environ["GCP_PROJECT"]
+    project_id = os.environ.get("GCP_PROJECT")
+    if not project_id:
+        raise ValueError("GCP_PROJECT environment variable is not set.")
+
     secret_manager_client = secretmanager.SecretManagerServiceClient()
 
     secrets = {}
     for secret_name in SECRET_NAMES:
-        secrets[secret_name] = secret_manager_client.access_secret_version(
+        secret_value = secret_manager_client.access_secret_version(
             name=f"projects/{project_id}/secrets/{secret_name}/versions/latest"
         ).payload.data.decode("UTF-8")
 
-    return secrets["PROSPER_USER"], secrets["PROSPER_PASSWORD"], secrets["PROSPER_CLIENT_ID"], secrets[
-        "PROSPER_CLIENT_SECRET"]
+        if not secret_value:
+            raise ValueError(f"{secret_name} value is not set in Secret Manager.")
+
+        secrets[secret_name] = secret_value
+
+    return secrets
+
