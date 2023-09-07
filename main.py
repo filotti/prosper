@@ -48,6 +48,7 @@ def invest(access_token: str, available_balance: float, investment_amount: int):
 
     for listing in listings.get('result', []):
         if available_balance < investment_amount:
+            print("Insufficient funds to invest.")
             break
         available_balance -= investment_amount
         print("Investing in listing:")
