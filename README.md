@@ -92,11 +92,7 @@ cd prosper
 
 ### 2. Enable the required APIs
 ```
-  gcloud services enable secretmanager.googleapis.com
-  gcloud services enable cloudfunctions.googleapis.com
-  gcloud services enable cloudscheduler.googleapis.com
-  gcloud services enable pubsub.googleapis.com
-  gcloud services enable cloudbuild.googleapis.com
+gcloud services enable secretmanager.googleapis.com cloudfunctions.googleapis.com cloudscheduler.googleapis.com pubsub.googleapis.com cloudbuild.googleapis.com
  ```
 
 ### 3. Create the Pub/Sub topic
