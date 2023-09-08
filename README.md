@@ -1,8 +1,5 @@
 # Prosper Auto-Investor
 
-This application automates the investment process for listings on Prosper based on user-defined criteria. It retrieves 
-your account balance, checks listings matching your criteria, and automatically places bids.
-
 ## Introduction
 
 This application is designed to automate the investment process for listings on Prosper. It retrieves your account
