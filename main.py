@@ -40,7 +40,11 @@ def invest(access_token: str, available_balance: float, investment_amount: int):
     if not raw_criteria:
         raise ValueError("INVESTMENT_CRITERIA environment variable is not set.")
 
-    criteria = json.loads(raw_criteria)
+    try:
+        criteria = json.loads(raw_criteria)
+    except json.JSONDecodeError as exc:
+        raise ValueError("INVESTMENT_CRITERIA environment variable contains invalid JSON.") from exc
+
     listings = get_listings(access_token, **criteria)
 
     for listing in listings.get('result', []):
