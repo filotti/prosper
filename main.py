@@ -1,3 +1,9 @@
+"""
+This application contains functions for investing in listings based on certain criteria.
+It retrieves secrets for authentication, gets an access token, account info, and listings,
+and invests in listings if the available balance is greater than the investment amount.
+"""
+
 import json
 import os
 import functions_framework
