@@ -67,22 +67,6 @@ Google Cloud Pub/Sub facilitates real-time messaging between applications. In th
 
 ## Setup
 
-### 1. Google Secrets Manager
-
-Store the following secrets in Google Secrets Manager:
-
-- `PROSPER_USER`: Your Prosper username.
-- `PROSPER_PASSWORD`: Your Prosper password.
-- `PROSPER_CLIENT_ID`: Prosper Client ID.
-- `PROSPER_CLIENT_SECRET`: Prosper Client Secret.
-
-
-You need to register your application with Prosper to get these credentials. Go to Settings -> API and your can
-generate the Client ID and Client Secret there.
-
-
-## Usage
-
 Unless you really know what you're doing, I recommend running these commands from Cloud Shell. This will
 make sure you're using the correct project and account.
 
@@ -102,13 +86,25 @@ cd prosper
   gcloud services enable cloudbuild.googleapis.com
  ```
 
-### 3. Create the Pub/Sub topic
+### 3. Store the secrets in Secrets Manager
+
+Store the following secrets in Google Secrets Manager:
+
+- `PROSPER_USER`: Your Prosper username.
+- `PROSPER_PASSWORD`: Your Prosper password.
+- `PROSPER_CLIENT_ID`: Prosper Client ID.
+- `PROSPER_CLIENT_SECRET`: Prosper Client Secret.
+
+You need to register your application with Prosper to get these credentials. Go to Settings -> API and your can
+generate the Client ID and Client Secret there.
+
+### 4. Create the Pub/Sub topic
 
 ```
 gcloud pubsub topics create prosper
 ```
 
-### 4. Create the Cloud Scheduler job
+### 5. Create the Cloud Scheduler job
 
 ```
 gcloud scheduler jobs create pubsub prosper --schedule="0 * * * *" --topic prosper --message-body="{}" --location=us-central1
@@ -118,7 +114,10 @@ gcloud scheduler jobs create pubsub prosper --schedule="0 * * * *" --topic prosp
 want by specifying a different cron expression. For example, to trigger the function every day at 9 AM, you would use 
 `0 9 * * *`.
 
-### 5. Set environment variables including the investment amounts and criteria
+Running the Cloud Function every hour will allow you to invest in listings as soon as they become available and you
+have enough funds in your account. 
+
+### 6. Set environment variables including the investment amounts and criteria
 
 The Cloud Function requires the following environment variables to be set:
 
@@ -157,7 +156,7 @@ These criteria will invest in:
 
 And it will invest $25 in each listing.
 
-### 6. Deploy the Cloud Function
+### 7. Deploy the Cloud Function
 
 Run the following command to deploy the Cloud Function:
 
@@ -171,12 +170,12 @@ gcloud functions deploy prosper \
 --docker-registry artifact-registry 
 ```
 
-### 7. Test the Cloud Function
+### 8. Test the Cloud Function
 
 You can test the Cloud Function by triggering a manual execution in Cloud Scheduler. To do this, go to the Cloud
 Scheduler page in the GCP Console, click on the three dots next to the job you created, and select "Force Run".
 
-### 8. Check the logs
+### 9. Check the logs
 
 You can check the logs for the Cloud Function in the GCP Console. Go to the Cloud Functions page, click on the name of
 the function, and then click on the "Logs" tab. You should see a log entry for each listing that was invested in.
