@@ -1,8 +1,5 @@
 # Prosper Auto-Investor
 
-This application automates the investment process for listings on Prosper based on user-defined criteria. It retrieves 
-your account balance, checks listings matching your criteria, and automatically places bids.
-
 ## Introduction
 
 This application is designed to automate the investment process for listings on Prosper. It retrieves your account
@@ -79,11 +76,7 @@ cd prosper
 
 ### 2. Enable the required APIs
 ```
-  gcloud services enable secretmanager.googleapis.com
-  gcloud services enable cloudfunctions.googleapis.com
-  gcloud services enable cloudscheduler.googleapis.com
-  gcloud services enable pubsub.googleapis.com
-  gcloud services enable cloudbuild.googleapis.com
+gcloud services enable secretmanager.googleapis.com cloudfunctions.googleapis.com cloudscheduler.googleapis.com pubsub.googleapis.com cloudbuild.googleapis.com
  ```
 
 ### 3. Store the secrets in Secrets Manager
@@ -143,7 +136,7 @@ Using Cloud Shell, you can set the variables like this:
 ```
 export GCP_PROJECT=$DEVSHELL_PROJECT_ID
 export INVESTMENT_AMOUNT=25
-export INVESTMENT_CRITERIA=''{"prosper_rating":["C","D","E"],"listing_term":["24","36"],"g218b_max":"0","biddable":"true","sort_by":"percent_funded desc","amount_remaining_min":"25"}''
+export INVESTMENT_CRITERIA='{"prosper_rating":["C","D","E"],"listing_term":["24","36"],"g218b_max":"0","biddable":"true","sort_by":"percent_funded desc","amount_remaining_min":"25"}'
 ```
 
 These criteria will invest in:
