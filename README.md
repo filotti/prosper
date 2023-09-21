@@ -136,7 +136,7 @@ Using Cloud Shell, you can set the variables like this:
 ```
 export GCP_PROJECT=$DEVSHELL_PROJECT_ID
 export INVESTMENT_AMOUNT=25
-export INVESTMENT_CRITERIA='{"prosper_rating":["C","D","E"],"listing_term":["24","36"],"g218b_max":"0","biddable":"true","sort_by":"percent_funded desc","amount_remaining_min":"25"}'
+export INVESTMENT_CRITERIA='{"prosper_rating":["C","D","E"],"listing_term":["24","36"],"g218b_number_of_delinquent_accounts":"0","biddable":"true","sort_by":"percent_funded desc","amount_remaining_min":"25"}'
 ```
 
 These criteria will invest in:
